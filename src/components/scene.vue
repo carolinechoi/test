@@ -7,7 +7,7 @@
             <p>x-coordinate: {{ x0 }}</p>
             <p>y-coordinate: {{ y0 }}</p>
             <p>z-coordinate: {{ z0 }}</p>
-            <div id="viewDiv"></div>
+            <div id="viewDiv" class="esri-widget"></div>
         </v-sheet>
 </template>
 
@@ -22,23 +22,6 @@
 
     export default {
         name: "Scene",
-        components: {
-            // SheetFooter: {
-            //     functional: true,
-
-            //     render(h, {children}) {
-            //         return h('v-sheet', {
-            //             staticClass: 'mt-auto align-center justify-center d-flex',
-            //             props: {
-            //                 color: 'rgba(0, 0, 0, .36)',
-            //                 dark: true,
-            //                 height: 600,
-            //                 width: 600
-            //             }
-            //         }, children)
-            //     }
-            // }
-        },
         props: {
             x0: Number,
             y0: Number,
@@ -50,32 +33,18 @@
         methods: {
             initMap(x0, y0, z0) {
                 console.log("started initMap() with values:" + this.x0 + this.y0);
-                loadModules(['esri/Map', 'esri/views/SceneView', 'esri/layers/IntegratedMeshLayer'])
-                    .then(([Map, SceneView, IntegratedMeshLayer]) => {
-                        var layer = new IntegratedMeshLayer({
-                            url: "https://tiles.arcgis.com/tiles/FQD0rKU8X5sAQfh8/arcgis/rest/services/VRICON_Yosemite_Sample_Integrated_Mesh_scene_layer/SceneServer"
-                        });
-                        var map = new Map({
-                            basemap: "satellite",
-                            layers: [layer],
-                            ground: "world-elevation"
+                loadModules(['esri/config', 'esri/views/SceneView', 'esri/WebScene'])
+                    .then(([SceneView, esriConfig, WebScene]) => {
+                        // esriConfig.portalUrl = "https://agportalw-sec-green7.csr.utexas.edu/portal";
+                        var scene = new WebScene({
+                            portalItem: {
+                                id: "3a9976baef9240ab8645ee25c7e9c096"
+                            }
                         });
                         console.log("started Sceneview");
                         var view = new SceneView({
-                            container: "viewDiv",
-                            map: map,
-                            camera: {
-                                position: {
-                                    x: this.x0,
-                                    y: this.y0,
-                                    z: this.z0,
-                                    spatialReference: {
-                                        wkid: 3857
-                                    }
-                                },
-                                tilt: 84,
-                                heading: 85
-                            }
+                            map: scene,
+                            container: "viewDiv"
                         });
                         console.log("built Sceneview");
                     }).catch(e => {
@@ -91,7 +60,7 @@
         position: absolute;
         bottom: 3%;
         right: 2%;
-        z-index: 1008;
+        z-index: 1010;
         /*display: none;*/
     }
     #viewDiv {

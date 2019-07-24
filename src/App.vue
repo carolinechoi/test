@@ -73,6 +73,12 @@
     }
 </script>
 
-<style scoped>
+<style>
+#dialogBox {
+            position: absolute;
+        bottom: 3%;
+        right: 2%;
 
+    z-index: 2000;
+}
 </style>
