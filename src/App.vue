@@ -42,16 +42,16 @@
         },
         methods: {
             makeAppear() {
-                console.log("started makeAppear()");
-                this.$eventHub.$emit('init');
-                let x = document.getElementById("dialogBox");
-                if (x.style.display === "none") {
-                    console.log("x.style.display = none");
-                    x.style.display = "block";
-                } else {
-                    x.style.display = "none";
-                    console.log("set display to none");
-                }
+            console.log("started makeAppear()");
+            this.$eventHub.$emit('init', this.x0, this.y0, this.z0);
+            let x = document.getElementById("dialogBox");
+            if (x.style.display === "none") {
+                console.log("x.style.display = none");
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+                console.log("set display to none");
+            }
             },
             onClickChild (x, y, z) {
                 console.log("started onClickChild");
