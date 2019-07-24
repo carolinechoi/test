@@ -1,4 +1,5 @@
 <template>
+    <v-container v-show="testFlg">
         <v-sheet id="sheet1"
             color="grey lighten-3"
             height="600"
@@ -9,6 +10,7 @@
             <p>z-coordinate: {{ z0 }}</p>
             <div id="viewDiv" class="esri-widget"></div>
         </v-sheet>
+    </v-container>
 </template>
 
 <script>
@@ -27,18 +29,24 @@
             y0: Number,
             z0: Number
         },
+        data() {
+            return {
+                testFlg: false
+            }
+        },
         mounted() {
             this.$eventHub.$on("init", this.initMap);
         },
         methods: {
             initMap(x0, y0, z0) {
-                console.log("started initMap() with values:" + this.x0 + this.y0);
-                loadModules(['esri/config', 'esri/views/SceneView', 'esri/WebScene'])
+                this.testFlg = !this.testFlg;
+                console.log(this.testFlg);
+                loadModules(['esri/views/SceneView', 'esri/config', 'esri/WebScene'])
                     .then(([SceneView, esriConfig, WebScene]) => {
-                        // esriConfig.portalUrl = "https://agportalw-sec-green7.csr.utexas.edu/portal";
+                        esriConfig.portalUrl = "https://agportalw-sec-green7.csr.utexas.edu/portal";
                         var scene = new WebScene({
                             portalItem: {
-                                id: "3a9976baef9240ab8645ee25c7e9c096"
+                                id: "a3bbc622780843b08eb5d13ff2d65a10"
                             }
                         });
                         console.log("started Sceneview");

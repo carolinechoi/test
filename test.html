@@ -6,7 +6,35 @@
       name="viewport"
       content="initial-scale=1,maximum-scale=1,user-scalable=no"
     />
-    <title>Load a basic web scene - 4.12</title>
+    <title>Overview map - 4.12</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        /* padding: 0;
+        margin: 0; */
+        height: 600px;
+        width: 600px;
+        z-index: 2000;
+      }
+
+      #overviewDiv {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 300px;
+        height: 200px;
+        border: 1px solid black;
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      #extentDiv {
+        border: 2px pink solid;
+        position: absolute;
+        z-index: 2;
+      }
+    </style>
 
     <link
       rel="stylesheet"
@@ -15,78 +43,117 @@
     <script src="https://js.arcgis.com/4.12/"></script>
 
     <script>
-      require(["esri/views/SceneView", "esri/WebScene","esri/config"], function(
-        SceneView,
-        WebScene,
-        esriConfig
-      ) {
-        esriConfig.portalUrl = "https://agportalw-sec-green7.csr.utexas.edu/portal"
-        var titleDiv = document.getElementById("titleDiv");
-
-        /************************************************************
-         * Creates a new WebScene instance. A WebScene must reference
-         * a PortalItem ID that represents a WebScene saved to
-         * arcgis.com or an on-premise portal.
-         *
-         * To load a WebScene from an on-premise portal, set the portal
-         * url with esriConfig.portalUrl.
-         ************************************************************/
-        var scene = new WebScene({
-          portalItem: {
-            // autocasts as new PortalItem()
-            id: "a3bbc622780843b08eb5d13ff2d65a10"
-          }
+      // import { loadModules } from 'esri-loader';
+      
+      require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/views/MapView",
+        "esri/geometry/Point",
+        "esri/core/watchUtils"
+      ], function(Map, SceneView, MapView, Point, watchUtils) {
+        // Create a Map with a basemap, to be used with in the main view
+        var mainMap = new Map({
+          basemap: "hybrid",
+          ground: "world-elevation"
         });
 
-        /************************************************************
-         * Set the WebScene instance to the map property in a SceneView.
-         ************************************************************/
-        var view = new SceneView({
-          map: scene,
+        // Create another Map, to be used in the overview "view"
+        var overviewMap = new Map({
+          basemap: "topo"
+        });
+
+        // Create the SceneView
+        var mainView = new SceneView({
           container: "viewDiv",
-          padding: {
-            top: 40
+          map: mainMap,
+          camera: {
+            position: {
+              spatialReference: {
+                latestWkid: 3857,
+                wkid: 102100
+              },
+              x: 925151,
+              y: 5956309,
+              z: 3871
+            },
+            heading: 203,
+            tilt: 72
           }
         });
 
-        view.when(function() {
-          // when the scene and view resolve, display the scene's
-          // title in the DOM
-          var title = scene.portalItem.title;
-          titleDiv.innerHTML = title;
+        // Create the MapView for overview map
+        var mapView = new MapView({
+          container: "overviewDiv",
+          map: overviewMap,
+          constraints: {
+            rotationEnabled: false
+          }
+        });
+
+        // Remove the default widgets
+        // mapView.ui.components = [];
+
+        var extentDiv = document.getElementById("extentDiv");
+
+        mapView.when(function() {
+          // Update the overview extent whenever the MapView or SceneView extent changes
+          mainView.watch("extent", updateOverviewExtent);
+          mapView.watch("extent", updateOverviewExtent);
+
+          // Update the minimap overview when the main view becomes stationary
+          watchUtils.when(mainView, "stationary", updateOverview);
+
+          function updateOverview() {
+            // Animate the MapView to a zoomed-out scale so we get a nice overview.
+            // We use the "progress" callback of the goTo promise to update
+            // the overview extent while animating
+            mapView.goTo({
+              center: mainView.center,
+              scale:
+                mainView.scale *
+                2 *
+                Math.max(
+                  mainView.width / mapView.width,
+                  mainView.height / mapView.height
+                )
+            });
+          }
+
+          function updateOverviewExtent() {
+            // Update the overview extent by converting the SceneView extent to the
+            // MapView screen coordinates and updating the extentDiv position.
+            var extent = mainView.extent;
+
+            var bottomLeft = mapView.toScreen(
+              new Point({
+                x: extent.xmin,
+                y: extent.ymin,
+                spatialReference: extent.spatialReference
+              })
+            );
+
+            var topRight = mapView.toScreen(
+              new Point({
+                x: extent.xmax,
+                y: extent.ymax,
+                spatialReference: extent.spatialReference
+              })
+            );
+
+            extentDiv.style.top = topRight.y + "px";
+            extentDiv.style.left = bottomLeft.x + "px";
+
+            extentDiv.style.height = bottomLeft.y - topRight.y + "px";
+            extentDiv.style.width = topRight.x - bottomLeft.x + "px";
+          }
         });
       });
     </script>
-
-    <style>
-      html,
-      body,
-      #viewDiv {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-      }
-
-      #titleDiv {
-        background-color: lightgray;
-        color: black;
-        padding: 5px;
-        position: absolute;
-        z-index: 2;
-        top: 0;
-        right: 0;
-        font-size: 20pt;
-        font-weight: bolder;
-        width: 100%;
-        height: 30px;
-        text-align: center;
-        opacity: 0.75;
-      }
-    </style>
   </head>
 
   <body>
-    <div id="viewDiv" class="esri-widget"><div id="titleDiv"></div></div>
+    <div id="viewDiv"></div>
+    <div id="overviewDiv"><div id="extentDiv"></div></div>
   </body>
 </html>
