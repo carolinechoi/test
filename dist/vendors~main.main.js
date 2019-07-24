@@ -401,6 +401,17 @@ eval("__webpack_require__.r(__webpack_exports__);\nfunction BinarySearchIndex (v
 
 /***/ }),
 
+/***/ "./node_modules/vue-event-hub/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/vue-event-hub/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval(";\r\n(function() {\r\n    var eventHub = {};\r\n    eventHub.install = function(Vue) {\r\n        var eventHub = new Vue();\r\n        Object.defineProperties(eventHub, {\r\n            on: {\r\n                get: function() {\r\n                    return eventHub.$on\r\n                }\r\n            },\r\n            emit: {\r\n                get: function() {\r\n                    return eventHub.$emit\r\n                }\r\n            },\r\n            off: {\r\n                get: function() {\r\n                    return eventHub.$off\r\n                }\r\n            }\r\n        });\r\n        Object.defineProperty(Vue.prototype, '$eventHub', {\r\n            get: function() {\r\n                return eventHub;\r\n            }\r\n        });\r\n\r\n        Object.defineProperty(Vue, 'eventHub', {\r\n            get: function() {\r\n                return eventHub;\r\n            }\r\n        });\r\n    }\r\n\r\n    //支持 common js\r\n    if (true) {\r\n        module.exports = eventHub;\r\n    } else {}\r\n\r\n})();\n\n//# sourceURL=webpack:///./node_modules/vue-event-hub/index.js?");
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js":
 /*!********************************************************************!*\
   !*** ./node_modules/vue-loader/lib/runtime/componentNormalizer.js ***!
