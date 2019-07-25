@@ -1,5 +1,5 @@
 <template>
-    <div id="mapTexas"></div>
+    <div id="mapTexas"><div id="extentDiv" v-show="showingFlg"></div></div>
 </template>
 <script>
     import L from "leaflet";
@@ -32,21 +32,24 @@
                 txCapQueryTotalRecordsCount:null,
                 txCapQueryCurrentDate:null,
                 txCapQuerySpatial:null,
+                showingFlg: false
             }
         },
         methods:{
-            //initializeMap: initializeMap()
             toggleLayer: toggleLayer,
-            //addRemoveMaskTornado:addRemoveMaskTornado,
             resetMap,
             redrawMap,
             goToBookmark,
             goToLocation,
             getMapInfo,
-            changeLayer
+            changeLayer,
+            // extentDiv() {
+            //     this.showingFlg = !this.showingFlg;
+            //     console.log(this.showingFlg);
+            // }
         },
         mounted(){
-            //console.log(this.$store.state.count);
+            // this.$eventHub.$on("extentDiv-created", this.extentDiv);
             esriToposLayer = esri.basemapLayer("Topographic");
             esriAerialsLayer = esri.basemapLayer('Imagery',{attribution: "ESRI et al",hideLogo:"true"});
             esriAerialsLabels = esri.basemapLayer('ImageryLabels');
@@ -69,19 +72,11 @@
                     esriToposLayer
                 ]
             });
-
-            popDenseLayer = esri.featureLayer({
-                url:'http://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/Congressional_District_Demographics/FeatureServer/0',
-                simplifyFactor: .5,
-                precision: 10,
-                //may need to use a different property in order to fill polygons correctly
-                style: function (feature) {
-                    if (feature.properties.POPDENS_CY < 100)
-                        return {fillColor: "red"};//, fill_opacity: .99};//, weight: 2, opacity: 255
-                }
-            }).addTo(movesMap);
-
-            //unable to fill polygons
+            movesMap.on('moveend', function(ev) {
+                console.log(this.getBounds());
+                this.$eventHub.$emit('latlng');
+                console.log("dklsjfalsdfj");
+            });
             esriSnowLayer = esri.featureLayer({
                 url: 'http://cumulus.tnc.org/arcgis/rest/services/Atlas/FreshwaterMaps/MapServer/1',
                 simplifyFactor: .5,

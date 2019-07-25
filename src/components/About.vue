@@ -1,6 +1,6 @@
 <template>
 
-        <v-sheet id="sheet"
+        <v-sheet id="aboutSheet"
                  color="light-blue lighten-4"
                  height="600"
                  width="1200"
@@ -37,7 +37,6 @@
         components: {
             SheetFooter: {
                 functional: true,
-
                 render(h, {children}) {
                     return h('v-sheet', {
                         staticClass: 'mt-auto align-center justify-center d-flex',
@@ -61,7 +60,7 @@
                         //console.log('about working');
                         //toggle visibility for 3Dscene
                         //not working lol
-                        let about = document.getElementById("sheet");
+                        let about = document.getElementById("aboutSheet");
                         if (about.style.display === "none") {
                             about.style.display = "block";
                         } else {
@@ -69,18 +68,16 @@
                         }
                     }
                 }
-
     }
 </script>
 
 <style scoped>
-    #sheet{
+    #aboutSheet{
         position: absolute;
         bottom: 11%;
         right: 5%;
         z-index: 1009;
     }
-
     #words{
         z-index: 3000;
     }

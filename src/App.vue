@@ -5,6 +5,7 @@
         <v-container fluid fill-height style="margin:0">
             <Navigation/>
             <Button @clicked="onClickChild"></Button>
+            <Sheets/>
             <Header/>
             <About style="display: none"/>
             <Scene :x0="x0" :y0="y0" :z0="z0" id="dialogBox" style="display: none"/>
@@ -21,7 +22,8 @@
     import Navigation from './components/Navigation.vue';
     import Scene from 'components/scene.vue';
     import About from 'components/About.vue';
-    import Button from "components/Button";
+    import Button from "components/Button.vue";
+    import Sheets from "components/Sheets.vue";
 
     let x0;
     let y0;
@@ -35,7 +37,8 @@
             Navigation,
             Header,
             Scene,
-            About
+            About,
+            Sheets
             },
         mounted() {
             this.$eventHub.$on('openBox', this.makeAppear);
@@ -75,10 +78,9 @@
 
 <style>
 #dialogBox {
-            position: absolute;
-        bottom: 3%;
-        right: 2%;
-
+    position: absolute;
+    bottom: 3%;
+    right: 2%;
     z-index: 2000;
 }
 </style>

@@ -48,7 +48,6 @@
                     <v-list-tile
                             v-for="(bookmarks, i) in bookmarks"
                             :key="i"
-                            @click= ""
                             v-on:click="emitBookMark(bookmarks[0])"
                     >
                         <!--                        trying to toggle between bookmarks-->
@@ -80,7 +79,6 @@
                     <v-list-tile
                             v-for="(basemap1, i) in basemap1"
                             :key="i"
-                            @click= ""
                             v-on:click="emitLayer(basemap1[2])"
                     >
                         <!--                        trying to toggle between basemaps-->
@@ -112,10 +110,12 @@
                     <v-list-tile
                             v-for="(eachLayer, i) in layers"
                             :key="i"
-                            @click="emitToggleLayer(eachLayer)"
-                            v-on:click= "eachLayer[2] = !eachLayer[2]"
-                    >
-                        <v-list-tile-action>
+                            >
+                        <v-list-tile-action
+                                @click="emitToggleLayer(eachLayer)"
+                                v-on:click= "eachLayer[2] = !eachLayer[2]"
+
+                        >
                             <v-checkbox></v-checkbox>
                         </v-list-tile-action>
                         <v-list-tile-content>
@@ -186,16 +186,17 @@
                 ],
                 layers: [
                     //made navigation drawer a little wider so that the snowmelt layer is completely shown
-                    ['Change in Snowmelt Timing\n(1975-2040)', 'layers', false, 'esriSnowLayer'],
-                    ['Population Density', 'layers', false],
-                    ['Rain Gauges', 'layers', false],
-                    ['Precipitation Change by 2050', 'layers', false]
+                    ['Change in Snowmelt Timing (1975-2040)', 'layers', false, 'esriSnowLayer'],
+                    ['Population Density', 'layers', false, 'popDenseLayer'],
+                    ['Rain Gauges', 'layers', false, 'rainGaugesLayer'],
+                    ['Precipitation Change by 2050', 'layers', false, 'precipitationLayer']
                 ],
                 bookmarks: [
                     ['United States', 'bookmark'],
                     ['California', 'bookmark'],
                     ['Florida', 'bookmark'],
                     ['Texas', 'bookmark'],
+                    ['Port Arthur', 'bookmark']
                 ],
                 mini: true,
                 right: null,
@@ -218,7 +219,7 @@
                 // }
                 // else
                 //     this.$eventHub.$emit('layerOff', layer);
-                this.$eventHub.$emit('toggleLayer', layer);
+                this.$eventHub.$emit('togglemLayer', layer);
                 console.log("layer on emitted");
             },
             openAbout: function(){
@@ -247,4 +248,7 @@
         top: 75px;
         left: 0px;
     }
+    /*#layersTaller{*/
+    /*    height: 1000px;*/
+    /*}*/
 </style>
